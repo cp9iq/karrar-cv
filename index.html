@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karrar Adel Ibrahim | Offensive Security Professional</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #111827;
+            --bg-card: #1a2332;
+            --bg-card-hover: #1f2b3d;
+            --border: #2a3a4e;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-green: #9fef00;
+            --accent-green-dim: rgba(159, 239, 0, 0.15);
+            --accent-cyan: #00d4ff;
+            --accent-cyan-dim: rgba(0, 212, 255, 0.15);
+            --accent-red: #ff4757;
+            --accent-red-dim: rgba(255, 71, 87, 0.15);
+            --accent-purple: #a855f7;
+            --accent-purple-dim: rgba(168, 85, 247, 0.15);
+            --accent-orange: #ff8c00;
+            --accent-orange-dim: rgba(255, 140, 0, 0.15);
+            --accent-blue: #3b82f6;
+            --accent-blue-dim: rgba(59, 130, 246, 0.15);
+            --gradient-green: linear-gradient(135deg, #9fef00, #5cb800);
+            --gradient-cyan: linear-gradient(135deg, #00d4ff, #0090b3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .bg-grid {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image:
+                linear-gradient(rgba(159, 239, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(159, 239, 0, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 0; pointer-events: none;
+        }
+
+        .bg-glow {
+            position: fixed; width: 600px; height: 600px; border-radius: 50%;
+            filter: blur(150px); opacity: 0.07; z-index: 0; pointer-events: none;
+        }
+        .bg-glow-1 { top: -200px; right: -200px; background: var(--accent-green); }
+        .bg-glow-2 { bottom: -200px; left: -200px; background: var(--accent-cyan); }
+
+        /* Nav */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            background: rgba(10, 14, 23, 0.85); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-inner {
+            max-width: 1200px; margin: 0 auto; padding: 0 2rem;
+            display: flex; justify-content: space-between; align-items: center; height: 70px;
+        }
+        .nav-logo {
+            font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 1.2rem;
+            color: var(--accent-green); text-decoration: none; display: flex; align-items: center; gap: 8px;
+        }
+        .nav-logo .terminal { color: var(--text-muted); }
+        .nav-links { display: flex; list-style: none; gap: 2rem; }
+        .nav-links a {
+            color: var(--text-secondary); text-decoration: none; font-size: 0.9rem;
+            font-weight: 500; transition: color 0.3s; position: relative;
+        }
+        .nav-links a:hover { color: var(--accent-green); }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px;
+            background: var(--accent-green); transition: width 0.3s;
+        }
+        .nav-links a:hover::after { width: 100%; }
+        .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 5px; }
+        .hamburger span { width: 25px; height: 2px; background: var(--text-primary); transition: all 0.3s; }
+
+        /* Hero */
+        .hero {
+            position: relative; z-index: 1; min-height: 100vh;
+            display: flex; align-items: center; justify-content: center; padding: 120px 2rem 80px;
+        }
+        .hero-content { max-width: 900px; text-align: center; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px; padding: 8px 20px;
+            background: var(--accent-green-dim); border: 1px solid rgba(159, 239, 0, 0.3);
+            border-radius: 50px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+            color: var(--accent-green); margin-bottom: 2rem; animation: fadeInDown 0.8s ease;
+        }
+        .hero-badge .pulse {
+            width: 8px; height: 8px; background: var(--accent-green);
+            border-radius: 50%; animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+        .hero h1 { font-size: 4rem; font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; animation: fadeInUp 0.8s ease; }
+        .hero h1 .name {
+            display: block;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .hero-subtitle { font-size: 1.3rem; color: var(--text-secondary); margin-bottom: 2rem; animation: fadeInUp 0.8s ease 0.2s backwards; }
+        .hero-stats { display: flex; justify-content: center; gap: 3rem; margin-bottom: 3rem; animation: fadeInUp 0.8s ease 0.4s backwards; }
+        .hero-stat { text-align: center; }
+        .hero-stat .number { font-family: 'JetBrains Mono', monospace; font-size: 2.5rem; font-weight: 800; color: var(--accent-green); display: block; }
+        .hero-stat .label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .hero-cta { display: flex; justify-content: center; gap: 1rem; animation: fadeInUp 0.8s ease 0.6s backwards; }
+
+        .btn {
+            display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px;
+            border-radius: 8px; font-weight: 600; font-size: 0.95rem;
+            text-decoration: none; transition: all 0.3s ease; cursor: pointer; border: none;
+        }
+        .btn-primary { background: var(--gradient-green); color: var(--bg-primary); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(159, 239, 0, 0.3); }
+        .btn-outline { background: transparent; color: var(--text-primary); border: 1px solid var(--border); }
+        .btn-outline:hover { border-color: var(--accent-green); color: var(--accent-green); transform: translateY(-2px); }
+
+        .typing { font-family: 'JetBrains Mono', monospace; color: var(--text-muted); font-size: 1rem; margin-bottom: 2rem; }
+        .typing .cursor { animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* Sections */
+        section { position: relative; z-index: 1; padding: 100px 2rem; }
+        .section-header { text-align: center; margin-bottom: 4rem; }
+        .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--accent-green); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1rem; display: block; }
+        .section-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; }
+        .section-desc { color: var(--text-secondary); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* Skills */
+        .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .skill-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+            padding: 2rem; transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+        .skill-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: var(--card-accent, var(--accent-green)); opacity: 0; transition: opacity 0.3s;
+        }
+        .skill-card:hover { transform: translateY(-5px); border-color: var(--card-accent, var(--accent-green)); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
+        .skill-card:hover::before { opacity: 1; }
+        .skill-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1.2rem; }
+        .skill-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.8rem; }
+        .skill-card p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7; }
+
+        /* Pro Labs */
+        .prolabs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; }
+        .lab-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+            overflow: hidden; transition: all 0.3s ease; cursor: pointer;
+        }
+        .lab-card:hover { transform: translateY(-6px); box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4); }
+
+        .lab-cert-img {
+            width: 100%; height: 220px; object-fit: cover; object-position: top;
+            border-bottom: 1px solid var(--border); transition: all 0.3s ease;
+        }
+        .lab-card:hover .lab-cert-img { opacity: 0.9; }
+
+        .lab-card-body { padding: 1.5rem; }
+        .lab-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.8rem; }
+        .lab-name { font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; font-weight: 700; }
+        .lab-type {
+            padding: 4px 12px; border-radius: 50px; font-size: 0.7rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 1px; white-space: nowrap;
+        }
+        .lab-type.pro { background: var(--accent-green-dim); color: var(--accent-green); border: 1px solid rgba(159, 239, 0, 0.3); }
+        .lab-type.mini { background: var(--accent-cyan-dim); color: var(--accent-cyan); border: 1px solid rgba(0, 212, 255, 0.3); }
+        .lab-meta { display: flex; gap: 1.2rem; margin-bottom: 0.8rem; font-size: 0.8rem; color: var(--text-muted); }
+        .lab-meta span { display: flex; align-items: center; gap: 4px; }
+        .lab-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+        .lab-tag {
+            padding: 3px 9px; background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px;
+            font-size: 0.72rem; color: var(--text-secondary);
+        }
+        .lab-view-cert {
+            display: flex; align-items: center; gap: 6px; margin-top: 1rem;
+            font-size: 0.8rem; color: var(--accent-green); font-weight: 600;
+        }
+
+        /* Lab colors */
+        .lab-dante .lab-name { color: #ff8c00; }
+        .lab-rastalabs .lab-name { color: #9fef00; }
+        .lab-offshore .lab-name { color: #ff4757; }
+        .lab-cybernetics .lab-name { color: #3b82f6; }
+        .lab-aptlabs .lab-name { color: #00d4ff; }
+        .lab-zephyr .lab-name { color: #2dd4bf; }
+        .lab-poo .lab-name { color: #ef4444; }
+        .lab-xen .lab-name { color: #a855f7; }
+        .lab-hades .lab-name { color: #ef4444; }
+        .lab-rpg .lab-name { color: #8b5cf6; }
+        .lab-mythical .lab-name { color: #3b82f6; }
+        .lab-puppet .lab-name { color: #d97706; }
+
+        /* Modal */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9); z-index: 9999;
+            justify-content: center; align-items: center; padding: 2rem;
+            cursor: zoom-out; backdrop-filter: blur(10px);
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-overlay img {
+            max-width: 95%; max-height: 90vh; object-fit: contain;
+            border-radius: 12px; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+            cursor: default; animation: modalIn 0.3s ease;
+        }
+        .modal-close {
+            position: fixed; top: 20px; right: 30px; width: 44px; height: 44px;
+            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%; color: white; font-size: 1.5rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s; z-index: 10000;
+        }
+        .modal-close:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.1); }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        /* CPE Banner */
+        .cpe-banner {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+            padding: 2.5rem; margin-top: 3rem; display: flex; justify-content: center; gap: 4rem; flex-wrap: wrap;
+        }
+        .cpe-item { text-align: center; }
+        .cpe-item .value {
+            font-family: 'JetBrains Mono', monospace; font-size: 2.5rem; font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .cpe-item .label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+        /* Timeline */
+        .timeline { position: relative; max-width: 800px; margin: 0 auto; }
+        .timeline::before {
+            content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px;
+            background: linear-gradient(to bottom, var(--accent-green), var(--accent-cyan), var(--accent-purple));
+        }
+        .timeline-item { position: relative; padding-left: 60px; margin-bottom: 2.5rem; }
+        .timeline-dot {
+            position: absolute; left: 12px; top: 5px; width: 18px; height: 18px;
+            border-radius: 50%; background: var(--bg-primary); border: 3px solid var(--accent-green); z-index: 1;
+        }
+        .timeline-date { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--accent-green); margin-bottom: 0.5rem; }
+        .timeline-content { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+        .timeline-content h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .timeline-content p { color: var(--text-secondary); font-size: 0.9rem; }
+
+        /* Contact */
+        .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; max-width: 800px; margin: 0 auto; }
+        .contact-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+            padding: 2rem; text-align: center; transition: all 0.3s ease; text-decoration: none; color: inherit;
+        }
+        .contact-card:hover { transform: translateY(-4px); border-color: var(--accent-green); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
+        .contact-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.5rem; }
+        .contact-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+        .contact-card p { color: var(--text-secondary); font-size: 0.9rem; }
+
+        /* Footer */
+        footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 2rem; text-align: center; }
+        footer p { color: var(--text-muted); font-size: 0.85rem; }
+        footer .htb-credit { font-family: 'JetBrains Mono', monospace; color: var(--accent-green); }
+
+        /* Animations */
+        .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.6s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none; position: absolute; top: 70px; left: 0; right: 0;
+                background: rgba(10, 14, 23, 0.95); backdrop-filter: blur(20px);
+                flex-direction: column; padding: 2rem; gap: 1.5rem; border-bottom: 1px solid var(--border);
+            }
+            .nav-links.active { display: flex; }
+            .hamburger { display: flex; }
+            .hero h1 { font-size: 2.5rem; }
+            .hero-stats { gap: 1.5rem; }
+            .hero-stat .number { font-size: 1.8rem; }
+            .hero-cta { flex-direction: column; align-items: center; }
+            .prolabs-grid { grid-template-columns: 1fr; }
+            .cpe-banner { gap: 2rem; }
+            .cpe-item .value { font-size: 1.8rem; }
+            section { padding: 60px 1rem; }
+            .lab-cert-img { height: 180px; }
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+
+<!-- Certificate Modal -->
+<div class="modal-overlay" id="certModal" onclick="closeModal(event)">
+    <button class="modal-close" onclick="closeModal(event)">&times;</button>
+    <img id="modalImg" src="" alt="Certificate">
+</div>
+
+<!-- Nav -->
+<nav>
+    <div class="nav-inner">
+        <a href="#" class="nav-logo"><span class="terminal">~/</span>karrar<span style="color: var(--accent-cyan)">.</span>sec</a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#about">About</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#prolabs">Pro Labs</a></li>
+            <li><a href="#timeline">Timeline</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="about">
+    <div class="hero-content">
+        <div class="hero-badge"><span class="pulse"></span> Available for Security Engagements</div>
+        <h1>
+            <span style="font-size: 0.5em; color: var(--text-secondary); font-weight: 400;">Hello, I'm</span>
+            <span class="name">Karrar Adel Ibrahim</span>
+        </h1>
+        <p class="hero-subtitle">Offensive Security Professional & Red Team Operator</p>
+        <div class="typing"><span id="typewriter"></span><span class="cursor">|</span></div>
+        <div class="hero-stats">
+            <div class="hero-stat"><span class="number" data-target="12">0</span><span class="label">Pro Labs</span></div>
+            <div class="hero-stat"><span class="number" data-target="300">0</span><span class="label">CPE Credits</span></div>
+            <div class="hero-stat"><span class="number" data-target="300">0</span><span class="label">Lab Hours</span></div>
+        </div>
+        <div class="hero-cta">
+            <a href="#prolabs" class="btn btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17"/></svg>
+                View Certifications
+            </a>
+            <a href="#contact" class="btn btn-outline">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Get in Touch
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Skills -->
+<section id="skills">
+    <div class="container">
+        <div class="section-header fade-in">
+            <span class="section-tag">// Expertise</span>
+            <h2 class="section-title">Core Competencies</h2>
+            <p class="section-desc">Specialized in enterprise-grade offensive security operations across complex Active Directory environments</p>
+        </div>
+        <div class="skills-grid">
+            <div class="skill-card fade-in" style="--card-accent: #ff4757;">
+                <div class="skill-icon" style="background: var(--accent-red-dim); color: var(--accent-red);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg>
+                </div>
+                <h3>Red Team Operations</h3>
+                <p>Full-scope adversary simulation including C2 operations, phishing campaigns, endpoint evasion, and persistence techniques.</p>
+            </div>
+            <div class="skill-card fade-in" style="--card-accent: #9fef00;">
+                <div class="skill-icon" style="background: var(--accent-green-dim); color: var(--accent-green);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                </div>
+                <h3>Active Directory Attacks</h3>
+                <p>Deep expertise in AD enumeration, Kerberos attacks, delegation abuse, trust exploitation, ADCS attacks, and cross-forest lateral movement.</p>
+            </div>
+            <div class="skill-card fade-in" style="--card-accent: #00d4ff;">
+                <div class="skill-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                </div>
+                <h3>Exploit Development</h3>
+                <p>Custom exploit development, vulnerability research, reverse engineering, and bypassing security controls including 2FA and EDR.</p>
+            </div>
+            <div class="skill-card fade-in" style="--card-accent: #a855f7;">
+                <div class="skill-icon" style="background: var(--accent-purple-dim); color: var(--accent-purple);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <h3>Network Penetration</h3>
+                <p>Advanced network pivoting, tunneling, relay attacks, MSSQL exploitation, and compromising multi-layered enterprise infrastructure.</p>
+            </div>
+            <div class="skill-card fade-in" style="--card-accent: #ff8c00;">
+                <div class="skill-icon" style="background: var(--accent-orange-dim); color: var(--accent-orange);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                </div>
+                <h3>Web Application Attacks</h3>
+                <p>SQL injection, web application enumeration, server-side attacks, authentication bypass, and chaining web vulnerabilities into full compromise.</p>
+            </div>
+            <div class="skill-card fade-in" style="--card-accent: #3b82f6;">
+                <div class="skill-icon" style="background: var(--accent-blue-dim); color: var(--accent-blue);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                </div>
+                <h3>DevOps & Infrastructure</h3>
+                <p>Exploiting DevOps infrastructure, CI/CD pipelines, container environments, and leveraging misconfigurations in modern deployments.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pro Labs -->
+<section id="prolabs" style="background: rgba(17, 24, 39, 0.5);">
+    <div class="container">
+        <div class="section-header fade-in">
+            <span class="section-tag">// Certifications</span>
+            <h2 class="section-title">Hack The Box Pro Labs</h2>
+            <p class="section-desc">Completed all 12 available HTB Pro Labs &mdash; click any certificate to view full size</p>
+        </div>
+
+        <h3 style="font-family: 'JetBrains Mono', monospace; color: var(--accent-green); font-size: 1rem; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 2px;" class="fade-in">
+            &gt; Pro Labs &mdash; Advanced (40 Hours / 40 CPE each)
+        </h3>
+
+        <div class="prolabs-grid" style="margin-bottom: 3rem;">
+
+            <div class="lab-card lab-dante fade-in" onclick="openModal('certs/Dante.png')">
+                <img src="certs/Dante.png" alt="Dante Certificate" class="lab-cert-img" loading="lazy">
+                <div class="lab-card-body">
+                    <div class="lab-card-header">
+                        <span class="lab-name">DANTE</span>
+                        <span class="lab-type pro">Pro Lab</span>
+                    </div>
+                    <div class="lab-meta">
+                        <span>&#128197; 07 Dec 2025</span>
+                        <span>&#9201; 40 Hours</span>
+                        <span>&#9989; 40 CPE</span>
+                    </div>
+                    <div class="lab-tags">
+                        <span class="lab-tag">Enumeration</span>
+                        <span class="lab-tag">Exploit Dev</span>
+                        <span class="lab-tag">Lateral Movement</span>
+                        <span class="lab-tag">Privilege Escalation</span>
+                        <span class="lab-tag">Web Attacks</span>
+                    </div>
+                    <div class="lab-view-cert">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        Click to view certificate
+                    </div>
+                </div>
+            </div>
+
+            <div class="lab-card lab-rastalabs fade-in" onclick="openModal('certs/RastaLabs.png')">
+                <img src="certs/RastaLabs.png" alt="RastaLabs Certificate" class="lab-cert-img" loading="lazy">
+                <div class="lab-card-body">
+                    <div class="lab-card-header">
+                        <span class="lab-name">RASTALABS</span>
+                        <span class="lab-type pro">Pro Lab</span>
+                    </div>
+                    <div class="lab-meta">
+                        <span>&#128197; 15 Dec 2025</span>
+                        <span>&#9201; 40 Hours</span>
+                        <span>&#9989; 40 CPE</span>
+                    </div>
+                    <div class="lab-tags">
+                        <span class="lab-tag">AD Exploitation</span>
+                        <span class="lab-tag">Evasion</span>
+                        <span class="lab-tag">Phishing</span>
+                        <span class="lab-tag">Persistence</span>
+                        <span class="lab-tag">Lateral Movement</span>
+                    </div>
+                    <div class="lab-view-cert">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        Click to view certificate
+                    </div>
+                </div>
+            </div>
+
+            <div class="lab-card lab-offshore fade-in" onclick="openModal('certs/Offshore.png')">
+                <img src="certs/Offshore.png" alt="Offshore Certificate" class="lab-cert-img" loading="lazy">
+                <div class="lab-card-body">
+                    <div class="lab-card-header">
+                        <span class="lab-name">OFFSHORE</span>
+                        <span class="lab-type pro">Pro Lab</span>
+                    </div>
+                    <div class="lab-meta">
+                        <span>&#128197; 17 Dec 2025</span>
+                        <span>&#9201; 40 Hours</span>
+                        <span>&#9989; 40 CPE</span>
+                    </div>
+                    <div class="lab-tags">
+                        <span class="lab-tag">AD Attacks</span>
+                        <span class="lab-tag">Tunneling</span>
+                        <span class="lab-tag">Pivoting</span>
+                        <span class="lab-tag">Evasion</span>
+                        <span class="lab-tag">Web Attacks</span>
+                    </div>
+                    <div class="lab-view-cert">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        Click to view certificate
+                    </div>
+                </div>
+            </div>
+
+            <div class="lab-card lab-cybernetics fade-in" onclick="openModal('certs/Cybernetics.png')">
+                <img src="certs/Cybernetics.png" alt="Cybernetics Certificate" class="lab-cert-img" loading="lazy">
+                <div class="lab-card-body">
+                    <div class="lab-card-header">
+                        <span class="lab-name">CYBERNETICS</span>
+                        <span class="lab-type pro">Pro Lab</span>
+                    </div>
+                    <div class="lab-meta">
+                        <span>&#128197; 20 Dec 2025</span>
+                        <span>&#9201; 40 Hours</span>
+                        <span>&#9989; 40 CPE</span>
+                    </div>
+                    <div class="lab-tags">
+                        <span class="lab-tag">AD Exploitation</span>
+                        <span class="lab-tag">Phishing</span>
+                        <span class="lab-tag">DevOps Security</span>
+                        <span class="lab-tag">Evasion</span>
+                    </div>
+                    <div class="lab-view-cert">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        Click to view certificate
+                    </div>
+                </div>
+            </div>
+
+            <div class="lab-card lab-aptlabs fade-in" onclick="openModal('certs/APTLabs.png')">
+                <img src="certs/APTLabs.png" alt="APTLabs Certificate" class="lab-cert-img" loading="lazy">
+                <div class="lab-card-body">
+                    <div class="lab-card-header">
+                        <span class="lab-name">APTLABS</span>
+                        <span class="lab-type pro">Pro Lab</span>
+                    </div>
+                    <div class="lab-meta">
+                        <span>&#128197; 23 Dec 2025</span>
+                        <span>&#9201; 40 Hours</span>
+                        <span>&#9989; 40 CPE</span>
+                    </div>
+                    <div class="lab-tags">
+                        <span class="lab-tag">Zero-CVE Compromise</span>
+                        <span class="lab-tag">2FA Bypass</span>
+                        <span class="lab-tag">Evasion</span>
+                        <span class="lab-tag">Lateral Movement</span>
+                    </div>
+                    <div class="lab-view-cert">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        Click to view certificate
+                    </div>
+                </div>
+            </div>
+
+            <div class="lab-card lab-zephyr fade-in" onclick="openModal('certs/Zephyr.png')">
+                <img src="certs/Zephyr.png" alt="Zephyr Certificate" class="lab-cert-img" loading="lazy">
+                <div class="lab-card-body">
+                    <div class="lab-card-header">
+                        <span class="lab-name">ZEPHYR</span>
+                        <span class="lab-type pro">Pro Lab</span>
+                    </div>
+                    <div class="lab-meta">
+                        <span>&#128197; 23 Dec 2025</span>
+                        <span>&#9201; 40 Hours</span>
+                        <span>&#9989; 40 CPE</span>
+                    </div>
+                    <div class="lab-tags">
+                        <span class="lab-tag">Relay Attacks</span>
+                        <span class="lab-tag">SQL Attacks</span>
+                        <span class="lab-tag">Password Cracking</span>
+                        <span class="lab-tag">AD Flaws</span>
+                        <span class="lab-tag">Trust Boundaries</span>
+                    </div>
+                    <div class="lab-view-cert">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        Click to view certificate
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 style="font-family: 'JetBrains Mono', monospace; color: var(--accent-cyan); font-size: 1rem; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 2px;" class="fade-in">
+            &gt; Mini Pro Labs &mdash; Focused (10 Hours / 10 CPE each)
+        </h3>
+
+        <div class="prolabs-grid">
+
+            <div class="lab-card lab-poo fade-in" onclick="openModal('certs/P.O.O.png')">
+                <img src="certs/P.O.O.png" alt="P.O.O. Certificate" class="lab-cert-img" loading="lazy">
+                <div class="lab-card-body">
+                    <div class="lab-card-header">
+                        <span class="lab-name">P.O.O.</span>
+                        <span class="lab-type mini">Mini Lab</span>
+                    </div>
+                    <div class="lab-meta">
+                        <span>&#128197; 09 Dec 2025</span>
+                        <span>&#9201; 10 Hours</span>
+                        <span>&#9989; 10 CPE</span>
+                    </div>
+                    <div class="lab-tags">
+                        <span class="lab-tag">Enumeration</span>
+                        <span class="lab-tag">AD Attacks</span>
+                        <span class="lab-tag">Web Attacks</span>
+                        <span class="lab-tag">Privesc</span>
+                    </div>
+                    <div class="lab-view-cert">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        Click to view certificate
+                    </div>
+                </div>
+            </div>
+
+            <div class="lab-card lab-xen fade-in" onclick="openModal('certs/Xen.png')">
+                <img src="certs/Xen.png" alt="Xen Certificate" class="lab-cert-img" loading="lazy">
+                <div class="lab-card-body">
+                    <div class="lab-card-header">
+                        <span class="lab-name">XEN</span>
+                        <span class="lab-type mini">Mini Lab</span>
+                    </div>
+                    <div class="lab-meta">
+                        <span>&#128197; 10 Dec 2025</span>
+                        <span>&#9201; 10 Hours</span>
+                        <span>&#9989; 10 CPE</span>
+                    </div>
+                    <div class="lab-tags">
+                        <span class="lab-tag">Pivoting</span>
+                        <span class="lab-tag">Phishing</span>
+                        <span class="lab-tag">AD Exploitation</span>
+                        <span class="lab-tag">Lateral Movement</span>
+                    </div>
+                    <div class="lab-view-cert">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        Click to view certificate
+                    </div>
+                </div>
+            </div>
+
+            <div class="lab-card lab-hades fade-in" onclick="openModal('certs/Hades.png')">
+                <img src="certs/Hades.png" alt="Hades Certificate" class="lab-cert-img" loading="lazy">
+                <div class="lab-card-body">
+                    <div class="lab-card-header">
+                        <span class="lab-name">HADES</span>
+                        <span class="lab-type mini">Mini Lab</span>
+                    </div>
+                    <div class="lab-meta">
+                        <span>&#128197; 01 Jan 2026</span>
+                        <span>&#9201; 10 Hours</span>
+                        <span>&#9989; 10 CPE</span>
+                    </div>
+                    <div class="lab-tags">
+                        <span class="lab-tag">Network Sniffing</span>
+                        <span class="lab-tag">Forensics</span>
+                        <span class="lab-tag">Password Cracking</span>
+                        <span class="lab-tag">Pivoting</span>
+                    </div>
+                    <div class="lab-view-cert">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        Click to view certificate
+                    </div>
+                </div>
+            </div>
+
+            <div class="lab-card lab-rpg fade-in" onclick="openModal('certs/RPG.png')">
+                <img src="certs/RPG.png" alt="RPG Certificate" class="lab-cert-img" loading="lazy">
+                <div class="lab-card-body">
+                    <div class="lab-card-header">
+                        <span class="lab-name">RPG</span>
+                        <span class="lab-type mini">Mini Lab</span>
+                    </div>
+                    <div class="lab-meta">
+                        <span>&#128197; 02 Jan 2026</span>
+                        <span>&#9201; 10 Hours</span>
+                        <span>&#9989; 10 CPE</span>
+                    </div>
+                    <div class="lab-tags">
+                        <span class="lab-tag">Reverse Engineering</span>
+                        <span class="lab-tag">Phishing</span>
+                        <span class="lab-tag">AD Attacks</span>
+                        <span class="lab-tag">Evasion</span>
+                    </div>
+                    <div class="lab-view-cert">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        Click to view certificate
+                    </div>
+                </div>
+            </div>
+
+            <div class="lab-card lab-mythical fade-in" onclick="openModal('certs/Mythical.png')">
+                <img src="certs/Mythical.png" alt="Mythical Certificate" class="lab-cert-img" loading="lazy">
+                <div class="lab-card-body">
+                    <div class="lab-card-header">
+                        <span class="lab-name">MYTHICAL</span>
+                        <span class="lab-type mini">Mini Lab</span>
+                    </div>
+                    <div class="lab-meta">
+                        <span>&#128197; 21 Apr 2026</span>
+                        <span>&#9201; 10 Hours</span>
+                        <span>&#9989; 10 CPE</span>
+                    </div>
+                    <div class="lab-tags">
+                        <span class="lab-tag">ADCS</span>
+                        <span class="lab-tag">MSSQL Attacks</span>
+                        <span class="lab-tag">C2 Operations</span>
+                        <span class="lab-tag">Lateral Movement</span>
+                    </div>
+                    <div class="lab-view-cert">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        Click to view certificate
+                    </div>
+                </div>
+            </div>
+
+            <div class="lab-card lab-puppet fade-in" onclick="openModal('certs/Puppet.png')">
+                <img src="certs/Puppet.png" alt="Puppet Certificate" class="lab-cert-img" loading="lazy">
+                <div class="lab-card-body">
+                    <div class="lab-card-header">
+                        <span class="lab-name">PUPPET</span>
+                        <span class="lab-type mini">Mini Lab</span>
+                    </div>
+                    <div class="lab-meta">
+                        <span>&#128197; 21 Apr 2026</span>
+                        <span>&#9201; 10 Hours</span>
+                        <span>&#9989; 10 CPE</span>
+                    </div>
+                    <div class="lab-tags">
+                        <span class="lab-tag">DevOps Exploitation</span>
+                        <span class="lab-tag">AD Attacks</span>
+                        <span class="lab-tag">C2 Operations</span>
+                        <span class="lab-tag">Privesc</span>
+                    </div>
+                    <div class="lab-view-cert">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        Click to view certificate
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CPE Summary -->
+        <div class="cpe-banner fade-in">
+            <div class="cpe-item"><div class="value">12/12</div><div class="label">Labs Completed</div></div>
+            <div class="cpe-item"><div class="value">300</div><div class="label">Total CPE Credits</div></div>
+            <div class="cpe-item"><div class="value">300</div><div class="label">Total Lab Hours</div></div>
+            <div class="cpe-item"><div class="value">100%</div><div class="label">Completion Rate</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- Timeline -->
+<section id="timeline">
+    <div class="container">
+        <div class="section-header fade-in">
+            <span class="section-tag">// Journey</span>
+            <h2 class="section-title">Completion Timeline</h2>
+            <p class="section-desc">All 12 Pro Labs completed within approximately 5 months</p>
+        </div>
+        <div class="timeline">
+            <div class="timeline-item fade-in">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">07 Dec 2025</div>
+                <div class="timeline-content">
+                    <h3>Dante &mdash; First Pro Lab Conquered</h3>
+                    <p>Started the Pro Labs journey with Dante, mastering enumeration, exploit development, and web application attacks across a multi-layered network.</p>
+                </div>
+            </div>
+            <div class="timeline-item fade-in">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">09 &ndash; 10 Dec 2025</div>
+                <div class="timeline-content">
+                    <h3>P.O.O. & Xen &mdash; Mini Labs Blitz</h3>
+                    <p>Completed two Mini Pro Labs back-to-back, sharpening Active Directory enumeration, pivoting, and phishing techniques.</p>
+                </div>
+            </div>
+            <div class="timeline-item fade-in">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">15 &ndash; 23 Dec 2025</div>
+                <div class="timeline-content">
+                    <h3>RastaLabs, Offshore, Cybernetics, APTLabs, Zephyr</h3>
+                    <p>An incredible streak &mdash; 5 full Pro Labs completed in just 8 days. Demonstrated mastery of advanced AD attacks, endpoint evasion, phishing, relay attacks, and multi-forest compromise.</p>
+                </div>
+            </div>
+            <div class="timeline-item fade-in">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">01 &ndash; 02 Jan 2026</div>
+                <div class="timeline-content">
+                    <h3>Hades & RPG &mdash; New Year, New Labs</h3>
+                    <p>Kicked off 2026 with Hades (network forensics, sniffing, disk backup analysis) and RPG (reverse engineering, endpoint evasion).</p>
+                </div>
+            </div>
+            <div class="timeline-item fade-in">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">21 Apr 2026</div>
+                <div class="timeline-content">
+                    <h3>Mythical & Puppet &mdash; Complete Collection</h3>
+                    <p>Finished the final two Mini Pro Labs, achieving 100% completion of all available HTB Pro Labs. Covered ADCS attacks, MSSQL exploitation, C2 operations, and DevOps infrastructure compromise.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact -->
+<section id="contact" style="background: rgba(17, 24, 39, 0.5);">
+    <div class="container">
+        <div class="section-header fade-in">
+            <span class="section-tag">// Connect</span>
+            <h2 class="section-title">Get in Touch</h2>
+            <p class="section-desc">Interested in security assessments, red team engagements, or collaboration?</p>
+        </div>
+        <div class="contact-grid">
+            <a class="contact-card fade-in" href="mailto:krar1997max1997@gmail.com">
+                <div class="contact-icon" style="background: var(--accent-red-dim); color: var(--accent-red);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </div>
+                <h3>Email</h3>
+                <p>krar1997max1997@gmail.com</p>
+            </a>
+            <a class="contact-card fade-in" href="https://app.hackthebox.com" target="_blank" rel="noopener">
+                <div class="contact-icon" style="background: var(--accent-green-dim); color: var(--accent-green);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                </div>
+                <h3>Hack The Box</h3>
+                <p>View HTB Profile</p>
+            </a>
+            <a class="contact-card fade-in" href="#contact">
+                <div class="contact-icon" style="background: var(--accent-blue-dim); color: var(--accent-blue);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                </div>
+                <h3>LinkedIn</h3>
+                <p>Professional Profile</p>
+            </a>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2026 <span class="htb-credit">Karrar Adel Ibrahim</span> &mdash; Offensive Security Professional</p>
+    <p style="margin-top: 8px; font-size: 0.75rem;">All certifications verified by <span class="htb-credit">Hack The Box</span></p>
+</footer>
+
+<script>
+    // Typewriter
+    const phrases = ['Penetration Tester', 'Red Team Operator', 'Active Directory Specialist', 'Exploit Developer', '12x HTB Pro Labs Certified'];
+    let pi = 0, ci = 0, del = false;
+    function tw() {
+        const c = phrases[pi], el = document.getElementById('typewriter');
+        el.textContent = c.substring(0, del ? --ci : ++ci);
+        let s = del ? 30 : 80;
+        if (!del && ci === c.length) { s = 2000; del = true; }
+        else if (del && ci === 0) { del = false; pi = (pi + 1) % phrases.length; s = 500; }
+        setTimeout(tw, s);
+    }
+    tw();
+
+    // Counter
+    function animateCounters() {
+        document.querySelectorAll('.hero-stat .number').forEach(c => {
+            const t = +c.dataset.target, st = performance.now();
+            (function u(n) {
+                const p = Math.min((n - st) / 2000, 1);
+                c.textContent = Math.floor((1 - Math.pow(1 - p, 3)) * t);
+                if (p < 1) requestAnimationFrame(u);
+            })(st);
+        });
+    }
+
+    // Scroll animations
+    const obs = new IntersectionObserver(e => e.forEach(x => x.isIntersecting && x.target.classList.add('visible')), { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+    const ho = new IntersectionObserver(e => { if (e[0].isIntersecting) { animateCounters(); ho.disconnect(); } });
+    ho.observe(document.querySelector('.hero'));
+
+    // Mobile menu
+    function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
+    document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => document.getElementById('navLinks').classList.remove('active')));
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', function(e) {
+        e.preventDefault();
+        const t = document.querySelector(this.getAttribute('href'));
+        if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }));
+
+    // Certificate Modal
+    function openModal(src) {
+        const m = document.getElementById('certModal');
+        document.getElementById('modalImg').src = src;
+        m.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal(e) {
+        if (e.target === document.getElementById('certModal') || e.target.classList.contains('modal-close')) {
+            document.getElementById('certModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            document.getElementById('certModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+</script>
+
+</body>
+</html>
