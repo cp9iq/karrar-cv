@@ -195,6 +195,58 @@
             font-size: 0.8rem; color: var(--accent-green); font-weight: 600;
         }
 
+        /* Fortress cards */
+        .fortress-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        .fortress-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+            overflow: hidden; transition: all 0.3s ease; cursor: pointer;
+        }
+        .fortress-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+            border-color: var(--accent-orange);
+        }
+        .fortress-img {
+            width: 100%; height: 200px; object-fit: cover; object-position: center;
+            border-bottom: 1px solid var(--border); transition: all 0.3s ease;
+        }
+        .fortress-card:hover .fortress-img { opacity: 0.9; }
+        .fortress-body { padding: 1.5rem; }
+        .fortress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
+        .fortress-name {
+            font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; font-weight: 700;
+        }
+        .fortress-badge {
+            padding: 4px 12px; border-radius: 50px; font-size: 0.7rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 1px;
+            background: var(--accent-orange-dim); color: var(--accent-orange);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+        }
+        .fortress-status {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.85rem; color: var(--accent-green); font-weight: 600;
+        }
+        .fortress-status .check {
+            width: 18px; height: 18px; border-radius: 50%;
+            background: var(--accent-green-dim); border: 1px solid rgba(159, 239, 0, 0.4);
+            display: flex; align-items: center; justify-content: center; font-size: 0.7rem;
+        }
+        .fortress-view {
+            display: flex; align-items: center; gap: 6px; margin-top: 0.8rem;
+            font-size: 0.8rem; color: var(--accent-orange); font-weight: 600;
+        }
+
+        .fortress-aws .fortress-name { color: #ff9900; }
+        .fortress-faraday .fortress-name { color: #e2e8f0; }
+        .fortress-synacktiv .fortress-name { color: #6366f1; }
+        .fortress-context .fortress-name { color: #22d3ee; }
+        .fortress-akerva .fortress-name { color: #e2e8f0; }
+        .fortress-jet .fortress-name { color: #e2e8f0; }
+
         /* Lab colors */
         .lab-dante .lab-name { color: #ff8c00; }
         .lab-rastalabs .lab-name { color: #9fef00; }
@@ -329,6 +381,7 @@
             <li><a href="#about">About</a></li>
             <li><a href="#skills">Skills</a></li>
             <li><a href="#prolabs">Pro Labs</a></li>
+            <li><a href="#fortresses">Fortresses</a></li>
             <li><a href="#timeline">Timeline</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
@@ -752,6 +805,111 @@
             <div class="cpe-item"><div class="value">300</div><div class="label">Total CPE Credits</div></div>
             <div class="cpe-item"><div class="value">300</div><div class="label">Total Lab Hours</div></div>
             <div class="cpe-item"><div class="value">100%</div><div class="label">Completion Rate</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- Fortresses -->
+<section id="fortresses">
+    <div class="container">
+        <div class="section-header fade-in">
+            <span class="section-tag">// Fortresses</span>
+            <h2 class="section-title">Hack The Box Fortresses</h2>
+            <p class="section-desc">Company-sponsored challenges designed by real security firms &mdash; solved all 6 available fortresses</p>
+        </div>
+
+        <div class="fortress-grid">
+
+            <div class="fortress-card fortress-aws fade-in" onclick="openModal('fortresses/AWS.png')">
+                <img src="fortresses/AWS.png" alt="AWS Fortress" class="fortress-img" loading="lazy">
+                <div class="fortress-body">
+                    <div class="fortress-header">
+                        <span class="fortress-name">AWS</span>
+                        <span class="fortress-badge">Fortress</span>
+                    </div>
+                    <div class="fortress-status"><span class="check">&#10003;</span> Solved &mdash; Sponsored by Amazon</div>
+                    <div class="fortress-view">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        Click to view proof
+                    </div>
+                </div>
+            </div>
+
+            <div class="fortress-card fortress-faraday fade-in" onclick="openModal('fortresses/Faraday.png')">
+                <img src="fortresses/Faraday.png" alt="Faraday Fortress" class="fortress-img" loading="lazy">
+                <div class="fortress-body">
+                    <div class="fortress-header">
+                        <span class="fortress-name">FARADAY</span>
+                        <span class="fortress-badge">Fortress</span>
+                    </div>
+                    <div class="fortress-status"><span class="check">&#10003;</span> Solved &mdash; Sponsored by FaradaySec</div>
+                    <div class="fortress-view">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        Click to view proof
+                    </div>
+                </div>
+            </div>
+
+            <div class="fortress-card fortress-synacktiv fade-in" onclick="openModal('fortresses/Synacktiv.png')">
+                <img src="fortresses/Synacktiv.png" alt="Synacktiv Fortress" class="fortress-img" loading="lazy">
+                <div class="fortress-body">
+                    <div class="fortress-header">
+                        <span class="fortress-name">SYNACKTIV</span>
+                        <span class="fortress-badge">Fortress</span>
+                    </div>
+                    <div class="fortress-status"><span class="check">&#10003;</span> Solved &mdash; Sponsored by Synacktiv</div>
+                    <div class="fortress-view">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        Click to view proof
+                    </div>
+                </div>
+            </div>
+
+            <div class="fortress-card fortress-context fade-in" onclick="openModal('fortresses/Context.png')">
+                <img src="fortresses/Context.png" alt="Context Fortress" class="fortress-img" loading="lazy">
+                <div class="fortress-body">
+                    <div class="fortress-header">
+                        <span class="fortress-name">CONTEXT</span>
+                        <span class="fortress-badge">Fortress</span>
+                    </div>
+                    <div class="fortress-status"><span class="check">&#10003;</span> Solved &mdash; Sponsored by Contextis</div>
+                    <div class="fortress-view">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        Click to view proof
+                    </div>
+                </div>
+            </div>
+
+            <div class="fortress-card fortress-akerva fade-in" onclick="openModal('fortresses/Akerva.png')">
+                <img src="fortresses/Akerva.png" alt="Akerva Fortress" class="fortress-img" loading="lazy">
+                <div class="fortress-body">
+                    <div class="fortress-header">
+                        <span class="fortress-name">AKERVA</span>
+                        <span class="fortress-badge">Fortress</span>
+                    </div>
+                    <div class="fortress-status"><span class="check">&#10003;</span> Solved &mdash; Sponsored by Akerva</div>
+                    <div class="fortress-view">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        Click to view proof
+                    </div>
+                </div>
+            </div>
+
+            <div class="fortress-card fortress-jet fade-in" onclick="openModal('fortresses/Jet.png')">
+                <img src="fortresses/Jet.png" alt="Jet Fortress" class="fortress-img" loading="lazy">
+                <div class="fortress-body">
+                    <div class="fortress-header">
+                        <span class="fortress-name">JET</span>
+                        <span class="fortress-badge">Fortress</span>
+                    </div>
+                    <div class="fortress-status"><span class="check">&#10003;</span> Solved &mdash; Sponsored by Jet</div>
+                    <div class="fortress-view">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        Click to view proof
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </section>
