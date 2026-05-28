@@ -92,7 +92,7 @@
         .nav-dropdown { position: relative; }
         .nav-dropdown > a { cursor: pointer; display: flex; align-items: center; gap: 4px; }
         .nav-dropdown > a .arrow { font-size: 0.6rem; transition: transform 0.3s; }
-        .nav-dropdown:hover > a .arrow { transform: rotate(180deg); }
+        .nav-dropdown.open > a .arrow { transform: rotate(180deg); }
         .dropdown-menu {
             display: none; position: absolute; top: calc(100% + 12px); left: 50%; transform: translateX(-50%);
             background: rgba(26, 35, 50, 0.98); backdrop-filter: blur(20px);
@@ -100,7 +100,7 @@
             padding: 8px 0; min-width: 240px; z-index: 1001;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
-        .nav-dropdown:hover .dropdown-menu { display: block; }
+        .nav-dropdown.open .dropdown-menu { display: block; }
         .dropdown-menu a {
             display: flex; align-items: center; gap: 10px;
             padding: 10px 18px; color: var(--text-secondary) !important;
@@ -119,8 +119,6 @@
                 border: none; border-top: 1px solid var(--border); border-radius: 0;
                 box-shadow: none; min-width: 100%; padding: 0;
             }
-            .nav-dropdown:hover .dropdown-menu { display: none; }
-            .nav-dropdown.open .dropdown-menu { display: block; }
         }
 
         /* Hero */
@@ -1121,6 +1119,13 @@
     // Mobile menu
     function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
     document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => document.getElementById('navLinks').classList.remove('active')));
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        document.querySelectorAll('.nav-dropdown').forEach(function(dd) {
+            if (!dd.contains(e.target)) dd.classList.remove('open');
+        });
+    });
 
     // Smooth scroll
     document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', function(e) {
