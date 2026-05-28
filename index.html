@@ -324,6 +324,36 @@
         .contact-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
         .contact-card p { color: var(--text-secondary); font-size: 0.9rem; }
 
+        /* Study Plans */
+        .studyplans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+        .studyplan-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+            overflow: hidden; transition: all 0.3s ease; text-decoration: none; color: inherit; display: block;
+        }
+        .studyplan-card:hover { transform: translateY(-6px); box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4); border-color: var(--accent-orange, #ff8c00); }
+        .studyplan-card-top {
+            padding: 2rem; background: linear-gradient(135deg, rgba(255,102,51,0.1), rgba(255,140,0,0.05));
+            border-bottom: 1px solid var(--border); text-align: center;
+        }
+        .studyplan-card-top .sp-icon { font-size: 3rem; margin-bottom: 0.8rem; display: block; }
+        .studyplan-card-top h3 { font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; font-weight: 700; color: var(--accent-orange, #ff8c00); }
+        .studyplan-card-body { padding: 1.5rem; }
+        .studyplan-card-body p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7; margin-bottom: 1rem; }
+        .studyplan-stats { display: flex; justify-content: space-around; margin-bottom: 1rem; }
+        .studyplan-stat { text-align: center; }
+        .studyplan-stat .sp-num { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; font-weight: 800; color: var(--accent-green); display: block; }
+        .studyplan-stat .sp-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .studyplan-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 1rem; }
+        .studyplan-tag {
+            padding: 3px 9px; background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px;
+            font-size: 0.72rem; color: var(--text-secondary);
+        }
+        .studyplan-open {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.85rem; color: var(--accent-orange, #ff8c00); font-weight: 600;
+        }
+
         /* Footer */
         footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 2rem; text-align: center; }
         footer p { color: var(--text-muted); font-size: 0.85rem; }
@@ -383,6 +413,7 @@
             <li><a href="#prolabs">Pro Labs</a></li>
             <li><a href="#fortresses">Fortresses</a></li>
             <li><a href="#timeline">Timeline</a></li>
+            <li><a href="#studyplans">Study Plans</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
         <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
@@ -963,6 +994,47 @@
                     <p>Finished the final two Mini Pro Labs, achieving 100% completion of all available HTB Pro Labs. Covered ADCS attacks, MSSQL exploitation, C2 operations, and DevOps infrastructure compromise.</p>
                 </div>
             </div>
+        </div>
+    </div>
+</section>
+
+<!-- Study Plans -->
+<section id="studyplans" style="background: rgba(17, 24, 39, 0.5);">
+    <div class="container">
+        <div class="section-header fade-in">
+            <span class="section-tag">// Learning Path</span>
+            <h2 class="section-title">Study Plans</h2>
+            <p class="section-desc">Structured study plans with progress tracking &mdash; click to open</p>
+        </div>
+        <div class="studyplans-grid">
+            <a class="studyplan-card fade-in" href="portswigger-study-plan.html" target="_blank">
+                <div class="studyplan-card-top">
+                    <span class="sp-icon">&#127919;</span>
+                    <h3>PortSwigger Web Security Academy</h3>
+                </div>
+                <div class="studyplan-card-body">
+                    <p>Complete study plan for PortSwigger Web Security Academy covering all topics from beginner to expert level with interactive progress tracking.</p>
+                    <div class="studyplan-stats">
+                        <div class="studyplan-stat"><span class="sp-num">95</span><span class="sp-label">Topics</span></div>
+                        <div class="studyplan-stat"><span class="sp-num">250+</span><span class="sp-label">Labs</span></div>
+                        <div class="studyplan-stat"><span class="sp-num">5</span><span class="sp-label">Phases</span></div>
+                    </div>
+                    <div class="studyplan-tags">
+                        <span class="studyplan-tag">SQLi</span>
+                        <span class="studyplan-tag">XSS</span>
+                        <span class="studyplan-tag">SSRF</span>
+                        <span class="studyplan-tag">CSRF</span>
+                        <span class="studyplan-tag">JWT</span>
+                        <span class="studyplan-tag">SSTI</span>
+                        <span class="studyplan-tag">Smuggling</span>
+                        <span class="studyplan-tag">BSCP Cert</span>
+                    </div>
+                    <div class="studyplan-open">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        Open Study Plan
+                    </div>
+                </div>
+            </a>
         </div>
     </div>
 </section>

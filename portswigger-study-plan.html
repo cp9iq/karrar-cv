@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PortSwigger Web Security Academy - Study Plan</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #06060f;
+            --card: #0d0d1a;
+            --border: #1a1a33;
+            --orange: #ff6633;
+            --orange-dark: #cc3300;
+            --green: #00e676;
+            --yellow: #ffd740;
+            --red: #ff5252;
+            --blue: #448aff;
+            --purple: #b388ff;
+            --text: #e8e8e8;
+            --text-dim: #777;
+            --text-muted: #555;
+        }
+
+        body {
+            font-family: 'Tajawal', 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+
+        /* ===== HEADER ===== */
+        .header {
+            text-align: center;
+            padding: 60px 30px;
+            background: linear-gradient(135deg, #0d0d1a 0%, #1a0a05 50%, #0d0d1a 100%);
+            border-radius: 24px;
+            margin-bottom: 30px;
+            border: 1px solid #2a1510;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -100px; right: -100px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(255,102,51,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .header-badge {
+            display: inline-block;
+            background: rgba(255,102,51,0.1);
+            border: 1px solid rgba(255,102,51,0.3);
+            color: var(--orange);
+            padding: 6px 20px;
+            border-radius: 30px;
+            font-size: 0.85em;
+            margin-bottom: 20px;
+            position: relative; z-index: 1;
+        }
+        .header h1 {
+            font-size: 2.6em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff 0%, #ff6633 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            position: relative; z-index: 1;
+        }
+        .header .subtitle {
+            color: var(--text-dim);
+            font-size: 1.1em;
+            position: relative; z-index: 1;
+        }
+
+        /* ===== GLOBAL PROGRESS ===== */
+        .global-progress {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 25px 30px;
+            margin-bottom: 25px;
+        }
+        .global-progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .global-progress-header h3 { color: var(--orange); font-size: 1.1em; }
+        .global-progress-percent { font-size: 2em; font-weight: 900; color: var(--orange); }
+        .global-bar {
+            height: 12px;
+            background: #1a1a2e;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .global-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--orange-dark), var(--orange), #ff8844);
+            border-radius: 6px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        .global-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .global-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .global-stat {
+            background: #0a0a18;
+            border-radius: 10px;
+            padding: 12px 15px;
+            text-align: center;
+        }
+        .global-stat .num { font-size: 1.5em; font-weight: 800; }
+        .global-stat .label { font-size: 0.8em; color: var(--text-dim); }
+
+        /* ===== PHASE NAV ===== */
+        .phase-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 25px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            flex-wrap: wrap;
+        }
+        .phase-nav-btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text-dim);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        .phase-nav-btn:hover { border-color: var(--orange); color: var(--text); }
+        .phase-nav-btn.active { background: var(--orange); color: #fff; border-color: var(--orange); }
+
+        /* ===== PHASE SECTION ===== */
+        .phase { margin-bottom: 30px; }
+        .phase-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px 25px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px 16px 0 0;
+            border-bottom: none;
+        }
+        .phase-number {
+            width: 50px; height: 50px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            font-weight: 900;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .phase-1-color { background: linear-gradient(135deg, #00c853, #00e676); }
+        .phase-2-color { background: linear-gradient(135deg, #ff6633, #ff8844); }
+        .phase-3-color { background: linear-gradient(135deg, #ffd740, #ffab00); }
+        .phase-4-color { background: linear-gradient(135deg, #ff5252, #ff1744); }
+        .phase-5-color { background: linear-gradient(135deg, #7c4dff, #b388ff); }
+        .phase-info { flex: 1; }
+        .phase-info h2 { font-size: 1.4em; font-weight: 800; }
+        .phase-info .phase-desc { color: var(--text-dim); font-size: 0.9em; margin-top: 2px; }
+        .phase-progress-mini { text-align: center; min-width: 60px; }
+        .phase-progress-mini .pct { font-size: 1.4em; font-weight: 800; color: var(--orange); }
+        .phase-progress-mini .of { font-size: 0.75em; color: var(--text-muted); }
+
+        .phase-tip {
+            padding: 12px 20px;
+            background: #0a0f0a;
+            border-right: 3px solid;
+            border-left: 1px solid var(--border);
+            font-size: 0.9em;
+            color: var(--text-dim);
+        }
+        .phase-tip.tip-green { border-right-color: var(--green); }
+        .phase-tip.tip-orange { border-right-color: var(--orange); }
+        .phase-tip.tip-yellow { border-right-color: var(--yellow); }
+        .phase-tip.tip-red { border-right-color: var(--red); }
+        .phase-tip.tip-purple { border-right-color: var(--purple); }
+
+        .phase-body {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 16px 16px;
+            padding: 15px 20px;
+        }
+
+        /* ===== TOPIC GROUP ===== */
+        .topic-group { margin-bottom: 15px; }
+        .topic-group-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #0a0a18;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+            user-select: none;
+        }
+        .topic-group-header:hover { background: #0f0f22; border-color: var(--border); }
+        .topic-group-header .tg-number {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            background: rgba(255,102,51,0.1);
+            color: var(--orange);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.85em;
+            flex-shrink: 0;
+        }
+        .topic-group-header .tg-title { flex: 1; font-weight: 700; font-size: 1.05em; }
+        .topic-group-header .tg-count {
+            font-size: 0.8em;
+            color: var(--text-muted);
+            background: #111125;
+            padding: 3px 10px;
+            border-radius: 15px;
+        }
+        .topic-group-header .tg-toggle { color: var(--text-muted); font-size: 0.8em; transition: transform 0.3s; }
+        .topic-group.open .tg-toggle { transform: rotate(180deg); }
+        .topic-group-body { display: none; padding: 8px 0 8px 20px; }
+        .topic-group.open .topic-group-body { display: block; }
+
+        /* ===== TASK ITEM — كل العنصر رابط ===== */
+        .task {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0;
+            margin: 4px 0;
+            border-radius: 10px;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        .task:hover {
+            background: #12122a;
+            border-color: var(--border);
+            box-shadow: 0 2px 12px rgba(255,102,51,0.06);
+        }
+
+        .task-check {
+            width: 24px; height: 24px;
+            min-width: 24px;
+            border-radius: 6px;
+            border: 2px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s;
+            cursor: pointer;
+            margin-right: 0;
+            margin-left: 14px;
+            z-index: 2;
+            position: relative;
+        }
+        .task-check:hover { border-color: var(--green); transform: scale(1.1); }
+        .task.done .task-check {
+            background: var(--green);
+            border-color: var(--green);
+        }
+        .task.done .task-check::after {
+            content: '\2713';
+            color: #000;
+            font-weight: 900;
+            font-size: 0.85em;
+        }
+
+        .task-link {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px 12px 14px;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.3s;
+            min-height: 48px;
+        }
+        .task-link:hover { color: var(--orange); }
+        .task.done .task-link {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .task-link .task-label { flex: 1; font-size: 0.95em; }
+        .task-link .task-arrow {
+            color: var(--text-muted);
+            font-size: 1.1em;
+            transition: all 0.3s;
+            opacity: 0;
+        }
+        .task:hover .task-arrow { opacity: 1; color: var(--orange); transform: translateX(-4px); }
+        .task-link .task-type {
+            font-size: 0.7em;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .type-lab { background: rgba(0,230,118,0.1); color: var(--green); border: 1px solid rgba(0,230,118,0.2); }
+        .type-read { background: rgba(68,138,255,0.1); color: var(--blue); border: 1px solid rgba(68,138,255,0.2); }
+        .type-cheat { background: rgba(255,215,64,0.1); color: var(--yellow); border: 1px solid rgba(255,215,64,0.2); }
+        .type-guide { background: rgba(179,136,255,0.1); color: var(--purple); border: 1px solid rgba(179,136,255,0.2); }
+
+        /* ===== BURP SUITE ===== */
+        .burp-section {
+            background: linear-gradient(135deg, #0d0d1a, #1a0a05);
+            border: 1px solid #2a1510;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+        .burp-section h3 { color: var(--orange); font-size: 1.3em; margin-bottom: 8px; }
+        .burp-section .burp-desc { color: var(--text-dim); margin-bottom: 20px; font-size: 0.95em; }
+        .burp-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+        .burp-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            cursor: pointer;
+        }
+        .burp-card:hover {
+            border-color: var(--orange);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255,102,51,0.15);
+            background: rgba(255,102,51,0.05);
+        }
+        .burp-card .bc-icon { font-size: 1.8em; margin-bottom: 8px; }
+        .burp-card .bc-title { font-weight: 700; font-size: 0.95em; margin-bottom: 4px; color: #fff; }
+        .burp-card .bc-desc { font-size: 0.8em; color: var(--text-muted); }
+        .burp-card .bc-open {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 0.75em;
+            color: var(--orange);
+            border: 1px solid rgba(255,102,51,0.3);
+            padding: 3px 10px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .burp-card:hover .bc-open { background: var(--orange); color: #fff; }
+
+        /* ===== CERTIFICATION ===== */
+        .cert-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+        .cert-section h3 { color: var(--yellow); font-size: 1.3em; margin-bottom: 20px; }
+        .cert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+        .cert-card {
+            background: #0a0a18;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px 15px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.3s;
+            font-size: 0.9em;
+            font-weight: 600;
+            display: block;
+        }
+        .cert-card:hover {
+            border-color: var(--yellow);
+            background: rgba(255,215,64,0.05);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255,215,64,0.1);
+        }
+        .cert-card .cc-icon { font-size: 1.8em; margin-bottom: 8px; display: block; }
+        .cert-card .cc-open {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 0.7em;
+            color: var(--yellow);
+            border: 1px solid rgba(255,215,64,0.3);
+            padding: 3px 10px;
+            border-radius: 5px;
+        }
+        .cert-card:hover .cc-open { background: var(--yellow); color: #000; }
+
+        /* ===== NOTES ===== */
+        .notes-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        .notes-section h3 { color: var(--orange); margin-bottom: 15px; font-size: 1.2em; }
+        .note-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+            color: var(--text-dim);
+            font-size: 0.95em;
+        }
+        .note-item .note-icon { color: var(--orange); font-size: 0.8em; margin-top: 5px; flex-shrink: 0; }
+        .note-item strong { color: var(--text); }
+
+        /* ===== RESET ===== */
+        .reset-btn {
+            display: inline-block;
+            padding: 10px 25px;
+            background: rgba(255,82,82,0.1);
+            border: 1px solid rgba(255,82,82,0.3);
+            color: var(--red);
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .reset-btn:hover { background: rgba(255,82,82,0.2); border-color: var(--red); }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+            font-size: 0.85em;
+        }
+        .footer a { color: var(--orange); text-decoration: none; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--orange); }
+
+        .confetti-container {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 9999; overflow: hidden;
+        }
+        .confetti {
+            position: absolute;
+            width: 8px; height: 8px;
+            top: -10px;
+            animation: confettiFall 3s ease-out forwards;
+        }
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .header { padding: 40px 20px; }
+            .global-stats { grid-template-columns: repeat(2, 1fr); }
+            .phase-header { flex-wrap: wrap; }
+            .burp-grid { grid-template-columns: 1fr; }
+            .cert-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-badge">Web Security Academy</div>
+        <h1>خطة دراسة PortSwigger</h1>
+        <p class="subtitle">4-6 أشهر &bull; ساعة-ساعتين يومياً &bull; 95 موضوع &bull; 250+ مختبر عملي</p>
+    </div>
+
+    <!-- GLOBAL PROGRESS -->
+    <div class="global-progress">
+        <div class="global-progress-header">
+            <h3>التقدم الكلي</h3>
+            <div class="global-progress-percent" id="globalPercent">0%</div>
+        </div>
+        <div class="global-bar">
+            <div class="global-bar-fill" id="globalBarFill" style="width: 0%"></div>
+        </div>
+        <div class="global-stats">
+            <div class="global-stat"><div class="num" id="statDone" style="color:var(--green)">0</div><div class="label">مكتمل</div></div>
+            <div class="global-stat"><div class="num" id="statRemaining" style="color:var(--orange)">0</div><div class="label">متبقي</div></div>
+            <div class="global-stat"><div class="num" id="statTotal" style="color:var(--blue)">0</div><div class="label">إجمالي</div></div>
+            <div class="global-stat"><div class="num" id="statPhase" style="color:var(--purple)">1</div><div class="label">المرحلة الحالية</div></div>
+        </div>
+    </div>
+
+    <!-- PHASE NAV -->
+    <div class="phase-nav">
+        <button class="phase-nav-btn active" onclick="scrollToPhase('phase1')">1 — الأساسيات</button>
+        <button class="phase-nav-btn" onclick="scrollToPhase('phase2')">2 — كلاسيكية</button>
+        <button class="phase-nav-btn" onclick="scrollToPhase('phase3')">3 — متوسطة</button>
+        <button class="phase-nav-btn" onclick="scrollToPhase('phase4')">4 — متقدم</button>
+        <button class="phase-nav-btn" onclick="scrollToPhase('phase5')">5 — خبير</button>
+        <button class="phase-nav-btn" onclick="scrollToPhase('burpTools')">Burp Suite</button>
+        <button class="phase-nav-btn" onclick="scrollToPhase('certSection')">الشهادة</button>
+    </div>
+
+    <!-- ========== PHASE 1 ========== -->
+    <div class="phase" id="phase1">
+        <div class="phase-header">
+            <div class="phase-number phase-1-color">1</div>
+            <div class="phase-info"><h2>Phase 1 — الأساسيات</h2><div class="phase-desc">القاعدة اللي كل شي بعدها يعتمد عليها</div></div>
+            <div class="phase-progress-mini"><div class="pct" id="phase1Pct">0%</div><div class="of" id="phase1Count">0/0</div></div>
+        </div>
+        <div class="phase-tip tip-green">ابدأ هنا — هذي القاعدة اللي كل شي بعدها يعتمد عليها</div>
+        <div class="phase-body">
+
+            <div class="topic-group open" data-group="1">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">1</div><div class="tg-title">Essential Skills</div><div class="tg-count"><span class="tg-done">0</span>/2</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t1">
+                        <div class="task-check" onclick="toggleTask(event, this)"></div>
+                        <a class="task-link" href="https://portswigger.net/web-security/essential-skills/obfuscating-attacks-using-encodings" target="_blank">
+                            <span class="task-label">Obfuscating attacks using encodings</span>
+                            <span class="task-type type-lab">LAB</span>
+                            <span class="task-arrow">&larr;</span>
+                        </a>
+                    </div>
+                    <div class="task" data-id="t2">
+                        <div class="task-check" onclick="toggleTask(event, this)"></div>
+                        <a class="task-link" href="https://portswigger.net/web-security/essential-skills/using-burp-scanner-during-manual-testing" target="_blank">
+                            <span class="task-label">Using Burp Scanner during manual testing</span>
+                            <span class="task-type type-guide">GUIDE</span>
+                            <span class="task-arrow">&larr;</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="2">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">2</div><div class="tg-title">Path Traversal</div><div class="tg-count"><span class="tg-done">0</span>/1</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t3">
+                        <div class="task-check" onclick="toggleTask(event, this)"></div>
+                        <a class="task-link" href="https://portswigger.net/web-security/file-path-traversal" target="_blank">
+                            <span class="task-label">Path traversal</span>
+                            <span class="task-type type-lab">LAB</span>
+                            <span class="task-arrow">&larr;</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="3">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">3</div><div class="tg-title">Information Disclosure</div><div class="tg-count"><span class="tg-done">0</span>/2</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t4">
+                        <div class="task-check" onclick="toggleTask(event, this)"></div>
+                        <a class="task-link" href="https://portswigger.net/web-security/information-disclosure" target="_blank">
+                            <span class="task-label">Information disclosure vulnerabilities</span>
+                            <span class="task-type type-lab">LAB</span>
+                            <span class="task-arrow">&larr;</span>
+                        </a>
+                    </div>
+                    <div class="task" data-id="t5">
+                        <div class="task-check" onclick="toggleTask(event, this)"></div>
+                        <a class="task-link" href="https://portswigger.net/web-security/information-disclosure/exploiting" target="_blank">
+                            <span class="task-label">How to find and exploit information disclosure</span>
+                            <span class="task-type type-read">READ</span>
+                            <span class="task-arrow">&larr;</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="4">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">4</div><div class="tg-title">Access Control & Privilege Escalation</div><div class="tg-count"><span class="tg-done">0</span>/3</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t6"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/access-control" target="_blank"><span class="task-label">Access control vulnerabilities and privilege escalation</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t7"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/access-control/idor" target="_blank"><span class="task-label">Insecure direct object references (IDOR)</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t8"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/access-control/security-models" target="_blank"><span class="task-label">Access control security models</span><span class="task-type type-read">READ</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="5">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">5</div><div class="tg-title">Authentication Vulnerabilities</div><div class="tg-count"><span class="tg-done">0</span>/5</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t9"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/authentication" target="_blank"><span class="task-label">Authentication vulnerabilities</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t10"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/authentication/password-based" target="_blank"><span class="task-label">Vulnerabilities in password-based login</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t11"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/authentication/multi-factor" target="_blank"><span class="task-label">Vulnerabilities in multi-factor authentication</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t12"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/authentication/other-mechanisms" target="_blank"><span class="task-label">Vulnerabilities in other authentication mechanisms</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t13"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/authentication/securing" target="_blank"><span class="task-label">How to secure your authentication mechanisms</span><span class="task-type type-guide">GUIDE</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== PHASE 2 ========== -->
+    <div class="phase" id="phase2">
+        <div class="phase-header">
+            <div class="phase-number phase-2-color">2</div>
+            <div class="phase-info"><h2>Phase 2 — الثغرات الكلاسيكية</h2><div class="phase-desc">الأكثر شيوعاً — تلاقيها في أغلب البرامج</div></div>
+            <div class="phase-progress-mini"><div class="pct" id="phase2Pct">0%</div><div class="of" id="phase2Count">0/0</div></div>
+        </div>
+        <div class="phase-tip tip-orange">الثغرات الأكثر شيوعاً — تلاقيها في أغلب البرامج</div>
+        <div class="phase-body">
+
+            <div class="topic-group" data-group="6">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">6</div><div class="tg-title">SQL Injection</div><div class="tg-count"><span class="tg-done">0</span>/5</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t14"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/sql-injection" target="_blank"><span class="task-label">SQL injection</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t15"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/sql-injection/examining-the-database" target="_blank"><span class="task-label">Examining the database in SQL injection attacks</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t16"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/sql-injection/union-attacks" target="_blank"><span class="task-label">SQL injection UNION attacks</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t17"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/sql-injection/blind" target="_blank"><span class="task-label">Blind SQL injection</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t18"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/sql-injection/cheat-sheet" target="_blank"><span class="task-label">SQL injection cheat sheet</span><span class="task-type type-cheat">CHEAT SHEET</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="7">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">7</div><div class="tg-title">Cross-Site Scripting (XSS)</div><div class="tg-count"><span class="tg-done">0</span>/10</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t19"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/cross-site-scripting/reflected" target="_blank"><span class="task-label">Reflected XSS</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t20"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/cross-site-scripting/stored" target="_blank"><span class="task-label">Stored XSS</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t21"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/cross-site-scripting/dom-based" target="_blank"><span class="task-label">DOM-based XSS</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t22"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/cross-site-scripting/contexts" target="_blank"><span class="task-label">Cross-site scripting contexts</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t23"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/cross-site-scripting/contexts/client-side-template-injection" target="_blank"><span class="task-label">Client-side template injection</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t24"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/cross-site-scripting/exploiting" target="_blank"><span class="task-label">Exploiting cross-site scripting vulnerabilities</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t25"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/cross-site-scripting/dangling-markup" target="_blank"><span class="task-label">Dangling markup injection</span><span class="task-type type-read">READ</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t26"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/cross-site-scripting/content-security-policy" target="_blank"><span class="task-label">Content security policy</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t27"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/cross-site-scripting/preventing" target="_blank"><span class="task-label">How to prevent XSS</span><span class="task-type type-guide">GUIDE</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t28"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/cross-site-scripting/cheat-sheet" target="_blank"><span class="task-label">XSS cheat sheet</span><span class="task-type type-cheat">CHEAT SHEET</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="8">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">8</div><div class="tg-title">Cross-Site Request Forgery (CSRF)</div><div class="tg-count"><span class="tg-done">0</span>/6</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t29"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/csrf" target="_blank"><span class="task-label">Cross-site request forgery (CSRF)</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t30"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/csrf/xss-vs-csrf" target="_blank"><span class="task-label">XSS vs CSRF</span><span class="task-type type-read">READ</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t31"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/csrf/bypassing-token-validation" target="_blank"><span class="task-label">Bypassing CSRF token validation</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t32"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions" target="_blank"><span class="task-label">Bypassing SameSite cookie restrictions</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t33"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/csrf/bypassing-referer-based-defenses" target="_blank"><span class="task-label">Bypassing Referer-based CSRF defenses</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t34"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/csrf/preventing" target="_blank"><span class="task-label">How to prevent CSRF</span><span class="task-type type-guide">GUIDE</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="9">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">9</div><div class="tg-title">Clickjacking</div><div class="tg-count"><span class="tg-done">0</span>/1</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t35"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/clickjacking" target="_blank"><span class="task-label">Clickjacking (UI redressing)</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="10">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">10</div><div class="tg-title">OS Command Injection</div><div class="tg-count"><span class="tg-done">0</span>/1</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t36"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/os-command-injection" target="_blank"><span class="task-label">OS command injection</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="11">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">11</div><div class="tg-title">File Upload Vulnerabilities</div><div class="tg-count"><span class="tg-done">0</span>/1</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t37"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/file-upload" target="_blank"><span class="task-label">File upload vulnerabilities</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== PHASE 3 ========== -->
+    <div class="phase" id="phase3">
+        <div class="phase-header">
+            <div class="phase-number phase-3-color">3</div>
+            <div class="phase-info"><h2>Phase 3 — ثغرات متوسطة</h2><div class="phase-desc">تحتاج فهم أعمق للبروتوكولات والمنطق</div></div>
+            <div class="phase-progress-mini"><div class="pct" id="phase3Pct">0%</div><div class="of" id="phase3Count">0/0</div></div>
+        </div>
+        <div class="phase-tip tip-yellow">تحتاج فهم أعمق للبروتوكولات والمنطق</div>
+        <div class="phase-body">
+
+            <div class="topic-group" data-group="12">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">12</div><div class="tg-title">Server-Side Request Forgery (SSRF)</div><div class="tg-count"><span class="tg-done">0</span>/2</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t38"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/ssrf" target="_blank"><span class="task-label">Server-side request forgery (SSRF)</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t39"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/ssrf/blind" target="_blank"><span class="task-label">Blind SSRF vulnerabilities</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="13">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">13</div><div class="tg-title">XML External Entity (XXE)</div><div class="tg-count"><span class="tg-done">0</span>/3</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t40"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/xxe" target="_blank"><span class="task-label">XML external entity (XXE) injection</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t41"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/xxe/xml-entities" target="_blank"><span class="task-label">XML entities</span><span class="task-type type-read">READ</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t42"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/xxe/blind" target="_blank"><span class="task-label">Finding and exploiting blind XXE</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="14">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">14</div><div class="tg-title">CORS & Same-Origin Policy</div><div class="tg-count"><span class="tg-done">0</span>/3</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t43"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/cors/same-origin-policy" target="_blank"><span class="task-label">Same-origin policy (SOP)</span><span class="task-type type-read">READ</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t44"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/cors" target="_blank"><span class="task-label">Cross-origin resource sharing (CORS)</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t45"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/cors/access-control-allow-origin" target="_blank"><span class="task-label">Access-Control-Allow-Origin header</span><span class="task-type type-read">READ</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="15">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">15</div><div class="tg-title">Business Logic Vulnerabilities</div><div class="tg-count"><span class="tg-done">0</span>/2</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t46"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/logic-flaws" target="_blank"><span class="task-label">Business logic vulnerabilities</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t47"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/logic-flaws/examples" target="_blank"><span class="task-label">Examples of business logic vulnerabilities</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="16">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">16</div><div class="tg-title">DOM-Based Vulnerabilities</div><div class="tg-count"><span class="tg-done">0</span>/5</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t48"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/dom-based" target="_blank"><span class="task-label">DOM-based vulnerabilities</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t49"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/dom-based/controlling-the-web-message-source" target="_blank"><span class="task-label">Controlling the web message source</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t50"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/dom-based/open-redirection" target="_blank"><span class="task-label">DOM-based open redirection</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t51"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/dom-based/cookie-manipulation" target="_blank"><span class="task-label">DOM-based cookie manipulation</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t52"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/dom-based/javascript-injection" target="_blank"><span class="task-label">DOM-based JavaScript injection</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="17">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">17</div><div class="tg-title">WebSockets Security</div><div class="tg-count"><span class="tg-done">0</span>/3</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t53"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/websockets" target="_blank"><span class="task-label">Testing for WebSockets security vulnerabilities</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t54"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/websockets/what-are-websockets" target="_blank"><span class="task-label">What are WebSockets?</span><span class="task-type type-read">READ</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t55"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/websockets/cross-site-websocket-hijacking" target="_blank"><span class="task-label">Cross-site WebSocket hijacking</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="18">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">18</div><div class="tg-title">OAuth 2.0 & OpenID Connect</div><div class="tg-count"><span class="tg-done">0</span>/4</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t56"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/oauth" target="_blank"><span class="task-label">OAuth 2.0 authentication vulnerabilities</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t57"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/oauth/grant-types" target="_blank"><span class="task-label">OAuth grant types</span><span class="task-type type-read">READ</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t58"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/oauth/openid" target="_blank"><span class="task-label">OpenID Connect</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t59"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/oauth/preventing" target="_blank"><span class="task-label">How to prevent OAuth vulnerabilities</span><span class="task-type type-guide">GUIDE</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== PHASE 4 ========== -->
+    <div class="phase" id="phase4">
+        <div class="phase-header">
+            <div class="phase-number phase-4-color">4</div>
+            <div class="phase-info"><h2>Phase 4 — متقدم</h2><div class="phase-desc">هنا تصير تفهم الأشياء العميقة — خذ وقتك</div></div>
+            <div class="phase-progress-mini"><div class="pct" id="phase4Pct">0%</div><div class="of" id="phase4Count">0/0</div></div>
+        </div>
+        <div class="phase-tip tip-red">هنا تصير تفهم الأشياء العميقة — خذ وقتك</div>
+        <div class="phase-body">
+
+            <div class="topic-group" data-group="19">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">19</div><div class="tg-title">JWT Attacks</div><div class="tg-count"><span class="tg-done">0</span>/2</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t60"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/jwt" target="_blank"><span class="task-label">JWT attacks</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t61"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/jwt/algorithm-confusion" target="_blank"><span class="task-label">Algorithm confusion attacks</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="20">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">20</div><div class="tg-title">Server-Side Template Injection (SSTI)</div><div class="tg-count"><span class="tg-done">0</span>/2</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t62"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/server-side-template-injection" target="_blank"><span class="task-label">Server-side template injection</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t63"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/server-side-template-injection/exploiting" target="_blank"><span class="task-label">Exploiting SSTI vulnerabilities</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="21">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">21</div><div class="tg-title">Insecure Deserialization</div><div class="tg-count"><span class="tg-done">0</span>/2</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t64"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/deserialization" target="_blank"><span class="task-label">Insecure deserialization</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t65"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/deserialization/exploiting" target="_blank"><span class="task-label">Exploiting insecure deserialization</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="22">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">22</div><div class="tg-title">HTTP Host Header Attacks</div><div class="tg-count"><span class="tg-done">0</span>/3</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t66"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/host-header" target="_blank"><span class="task-label">HTTP Host header attacks</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t67"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/host-header/exploiting" target="_blank"><span class="task-label">Identify and exploit Host header vulnerabilities</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t68"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/host-header/exploiting/password-reset-poisoning" target="_blank"><span class="task-label">Password reset poisoning</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="23">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">23</div><div class="tg-title">Web Cache Poisoning</div><div class="tg-count"><span class="tg-done">0</span>/3</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t69"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/web-cache-poisoning" target="_blank"><span class="task-label">Web cache poisoning</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t70"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/web-cache-poisoning/exploiting-design-flaws" target="_blank"><span class="task-label">Exploiting cache design flaws</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t71"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/web-cache-poisoning/exploiting-implementation-flaws" target="_blank"><span class="task-label">Exploiting cache implementation flaws</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== PHASE 5 ========== -->
+    <div class="phase" id="phase5">
+        <div class="phase-header">
+            <div class="phase-number phase-5-color">5</div>
+            <div class="phase-info"><h2>Phase 5 — خبير</h2><div class="phase-desc">أصعب المواضيع — لكن أعلى المكافآت في Bug Bounty</div></div>
+            <div class="phase-progress-mini"><div class="pct" id="phase5Pct">0%</div><div class="of" id="phase5Count">0/0</div></div>
+        </div>
+        <div class="phase-tip tip-purple">أصعب المواضيع — لكن أعلى المكافآت في Bug Bounty</div>
+        <div class="phase-body">
+
+            <div class="topic-group" data-group="24">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">24</div><div class="tg-title">HTTP Request Smuggling</div><div class="tg-count"><span class="tg-done">0</span>/12</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t72"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/request-smuggling" target="_blank"><span class="task-label">HTTP request smuggling</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t73"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/request-smuggling/finding" target="_blank"><span class="task-label">Finding HTTP request smuggling vulnerabilities</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t74"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/request-smuggling/exploiting" target="_blank"><span class="task-label">Exploiting HTTP request smuggling</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t75"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/request-smuggling/advanced" target="_blank"><span class="task-label">Advanced request smuggling</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t76"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/request-smuggling/advanced/http2-exclusive-vectors" target="_blank"><span class="task-label">HTTP/2-exclusive vectors</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t77"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/request-smuggling/advanced/response-queue-poisoning" target="_blank"><span class="task-label">Response queue poisoning</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t78"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/request-smuggling/advanced/request-tunnelling" target="_blank"><span class="task-label">HTTP request tunnelling</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t79"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/request-smuggling/advanced/http2-downgrading" target="_blank"><span class="task-label">HTTP/2 downgrading</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t80"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/request-smuggling/browser" target="_blank"><span class="task-label">Browser-powered request smuggling</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t81"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/request-smuggling/browser/cl-0" target="_blank"><span class="task-label">CL.0 request smuggling</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t82"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/request-smuggling/browser/client-side-desync" target="_blank"><span class="task-label">Client-side desync attacks</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t83"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/request-smuggling/browser/pause-based-desync" target="_blank"><span class="task-label">Pause-based desync attacks</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="25">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">25</div><div class="tg-title">Race Conditions</div><div class="tg-count"><span class="tg-done">0</span>/1</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t84"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/race-conditions" target="_blank"><span class="task-label">Race conditions</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="26">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">26</div><div class="tg-title">Prototype Pollution</div><div class="tg-count"><span class="tg-done">0</span>/5</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t85"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/prototype-pollution/javascript-prototypes-and-inheritance" target="_blank"><span class="task-label">JavaScript prototypes and inheritance</span><span class="task-type type-read">READ</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t86"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/prototype-pollution/client-side" target="_blank"><span class="task-label">Client-side prototype pollution</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t87"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/prototype-pollution/client-side/browser-apis" target="_blank"><span class="task-label">Prototype pollution via browser APIs</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t88"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/prototype-pollution/server-side" target="_blank"><span class="task-label">Server-side prototype pollution</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t89"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/prototype-pollution/preventing" target="_blank"><span class="task-label">Preventing prototype pollution</span><span class="task-type type-guide">GUIDE</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="27">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">27</div><div class="tg-title">GraphQL API Vulnerabilities</div><div class="tg-count"><span class="tg-done">0</span>/2</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t90"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/graphql/what-is-graphql" target="_blank"><span class="task-label">What is GraphQL?</span><span class="task-type type-read">READ</span><span class="task-arrow">&larr;</span></a></div>
+                    <div class="task" data-id="t91"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/graphql" target="_blank"><span class="task-label">GraphQL API vulnerabilities</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="28">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">28</div><div class="tg-title">Web LLM Attacks</div><div class="tg-count"><span class="tg-done">0</span>/1</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t92"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/llm-attacks" target="_blank"><span class="task-label">Web LLM attacks</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="29">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">29</div><div class="tg-title">API Testing</div><div class="tg-count"><span class="tg-done">0</span>/1</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t93"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/api-testing" target="_blank"><span class="task-label">API testing</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="30">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">30</div><div class="tg-title">NoSQL Injection</div><div class="tg-count"><span class="tg-done">0</span>/1</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t94"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/nosql-injection" target="_blank"><span class="task-label">NoSQL injection</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+
+            <div class="topic-group" data-group="31">
+                <div class="topic-group-header" onclick="toggleGroup(this)">
+                    <div class="tg-number">31</div><div class="tg-title">Web Cache Deception</div><div class="tg-count"><span class="tg-done">0</span>/1</div><div class="tg-toggle">▼</div>
+                </div>
+                <div class="topic-group-body">
+                    <div class="task" data-id="t95"><div class="task-check" onclick="toggleTask(event, this)"></div><a class="task-link" href="https://portswigger.net/web-security/web-cache-deception" target="_blank"><span class="task-label">Web cache deception</span><span class="task-type type-lab">LAB</span><span class="task-arrow">&larr;</span></a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== BURP SUITE ========== -->
+    <div class="burp-section" id="burpTools">
+        <h3>Burp Suite — الأدوات الأساسية</h3>
+        <p class="burp-desc">تعلم أدوات Burp Suite — اضغط على أي أداة يفتحلك التوثيق الرسمي مباشرة</p>
+        <div class="burp-grid">
+            <a class="burp-card" href="https://portswigger.net/burp/documentation/desktop/getting-started" target="_blank">
+                <div class="bc-icon">&#127891;</div><div class="bc-title">Getting Started</div>
+                <div class="bc-desc">دليل البدء — التثبيت والإعداد والاستخدام الأول</div>
+                <span class="bc-open">افتح الدليل &larr;</span>
+            </a>
+            <a class="burp-card" href="https://portswigger.net/burp/documentation/desktop/tools/proxy" target="_blank">
+                <div class="bc-icon">&#128737;</div><div class="bc-title">Proxy</div>
+                <div class="bc-desc">اعتراض وتعديل الطلبات بين المتصفح والسيرفر</div>
+                <span class="bc-open">افتح التوثيق &larr;</span>
+            </a>
+            <a class="burp-card" href="https://portswigger.net/burp/documentation/desktop/tools/repeater" target="_blank">
+                <div class="bc-icon">&#128260;</div><div class="bc-title">Repeater</div>
+                <div class="bc-desc">إعادة إرسال الطلبات يدوياً مع التعديل والتجربة</div>
+                <span class="bc-open">افتح التوثيق &larr;</span>
+            </a>
+            <a class="burp-card" href="https://portswigger.net/burp/documentation/desktop/tools/intruder" target="_blank">
+                <div class="bc-icon">&#9889;</div><div class="bc-title">Intruder</div>
+                <div class="bc-desc">هجمات آلية — Brute Force, Fuzzing, Parameter Testing</div>
+                <span class="bc-open">افتح التوثيق &larr;</span>
+            </a>
+            <a class="burp-card" href="https://portswigger.net/burp/documentation/scanner" target="_blank">
+                <div class="bc-icon">&#128269;</div><div class="bc-title">Scanner</div>
+                <div class="bc-desc">فحص تلقائي للثغرات — Active & Passive Scanning</div>
+                <span class="bc-open">افتح التوثيق &larr;</span>
+            </a>
+            <a class="burp-card" href="https://portswigger.net/burp/documentation/desktop/tools/decoder" target="_blank">
+                <div class="bc-icon">&#128295;</div><div class="bc-title">Decoder</div>
+                <div class="bc-desc">ترميز وفك ترميز — Base64, URL, HTML, Hex</div>
+                <span class="bc-open">افتح التوثيق &larr;</span>
+            </a>
+            <a class="burp-card" href="https://portswigger.net/burp/documentation/desktop/tools/comparer" target="_blank">
+                <div class="bc-icon">&#128203;</div><div class="bc-title">Comparer</div>
+                <div class="bc-desc">مقارنة الطلبات والاستجابات لاكتشاف الفروقات</div>
+                <span class="bc-open">افتح التوثيق &larr;</span>
+            </a>
+            <a class="burp-card" href="https://portswigger.net/burp/documentation/desktop/tools/sequencer" target="_blank">
+                <div class="bc-icon">&#128200;</div><div class="bc-title">Sequencer</div>
+                <div class="bc-desc">تحليل عشوائية التوكنات والـ Session IDs</div>
+                <span class="bc-open">افتح التوثيق &larr;</span>
+            </a>
+            <a class="burp-card" href="https://portswigger.net/burp/documentation/desktop/tools/target" target="_blank">
+                <div class="bc-icon">&#127919;</div><div class="bc-title">Target / Site Map</div>
+                <div class="bc-desc">خريطة الموقع — تصفح شجري لكل الصفحات والمسارات</div>
+                <span class="bc-open">افتح التوثيق &larr;</span>
+            </a>
+            <a class="burp-card" href="https://portswigger.net/burp/documentation/collaborator" target="_blank">
+                <div class="bc-icon">&#128225;</div><div class="bc-title">Collaborator</div>
+                <div class="bc-desc">كشف ثغرات Out-of-Band — DNS, HTTP, SMTP</div>
+                <span class="bc-open">افتح التوثيق &larr;</span>
+            </a>
+            <a class="burp-card" href="https://portswigger.net/burp/documentation/desktop/tools/logger" target="_blank">
+                <div class="bc-icon">&#128220;</div><div class="bc-title">Logger</div>
+                <div class="bc-desc">سجل كامل لجميع الطلبات والاستجابات</div>
+                <span class="bc-open">افتح التوثيق &larr;</span>
+            </a>
+            <a class="burp-card" href="https://portswigger.net/burp/documentation/desktop/extensions" target="_blank">
+                <div class="bc-icon">&#128268;</div><div class="bc-title">Extensions & BApp Store</div>
+                <div class="bc-desc">إضافات وأدوات خارجية لتوسيع قدرات Burp</div>
+                <span class="bc-open">افتح التوثيق &larr;</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- ========== CERTIFICATION ========== -->
+    <div class="cert-section" id="certSection">
+        <h3>&#127942; Burp Suite Certified Practitioner (BSCP)</h3>
+        <div class="cert-grid">
+            <a class="cert-card" href="https://portswigger.net/web-security/certification" target="_blank"><span class="cc-icon">&#127942;</span>احصل على الشهادة<span class="cc-open">افتح &larr;</span></a>
+            <a class="cert-card" href="https://portswigger.net/web-security/certification/how-to-prepare" target="_blank"><span class="cc-icon">&#128218;</span>كيف تستعد<span class="cc-open">افتح &larr;</span></a>
+            <a class="cert-card" href="https://portswigger.net/web-security/certification/how-it-works" target="_blank"><span class="cc-icon">&#9881;</span>كيف يعمل الامتحان<span class="cc-open">افتح &larr;</span></a>
+            <a class="cert-card" href="https://portswigger.net/web-security/certification/practice-exam" target="_blank"><span class="cc-icon">&#128221;</span>اختبار تجريبي<span class="cc-open">افتح &larr;</span></a>
+            <a class="cert-card" href="https://portswigger.net/web-security/certification/exam-hints-and-guidance" target="_blank"><span class="cc-icon">&#128161;</span>نصائح وإرشادات<span class="cc-open">افتح &larr;</span></a>
+            <a class="cert-card" href="https://portswigger.net/web-security/certification/frequently-asked-questions" target="_blank"><span class="cc-icon">&#10067;</span>الأسئلة الشائعة<span class="cc-open">افتح &larr;</span></a>
+        </div>
+    </div>
+
+    <!-- ========== NOTES ========== -->
+    <div class="notes-section">
+        <h3>نصائح للدراسة</h3>
+        <div class="note-item"><span class="note-icon">&#9654;</span><span>حل <strong>كل الـ Labs</strong> قبل ما تنتقل (Apprentice &rarr; Practitioner &rarr; Expert)</span></div>
+        <div class="note-item"><span class="note-icon">&#9654;</span><span>لا تقرأ بس — الـ <strong>Labs هي اللي تثبّت المعلومة</strong></span></div>
+        <div class="note-item"><span class="note-icon">&#9654;</span><span>كل موضوع خذ له <strong>3-5 أيام</strong> على الأقل</span></div>
+        <div class="note-item"><span class="note-icon">&#9654;</span><span>سجّل <strong>ملاحظاتك</strong> تحت كل موضوع</span></div>
+        <div class="note-item"><span class="note-icon">&#9654;</span><span>اذا عجزت عن Lab، شوف الحل وارجع <strong>حله بنفسك بعد يوم</strong></span></div>
+        <div class="note-item"><span class="note-icon">&#9654;</span><span>استخدم <strong>Burp Suite Community</strong> (مجاني) لحل كل المختبرات</span></div>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 30px;">
+        <button class="reset-btn" onclick="resetProgress()">&#128465; مسح كل التقدم وبدء من جديد</button>
+    </div>
+
+    <div class="footer">
+        المصدر: <a href="https://portswigger.net/web-security/all-materials" target="_blank">PortSwigger Web Security Academy</a><br>
+        التقدم يُحفظ تلقائياً في المتصفح &bull; اضغط على أي موضوع يفتحلك الصفحة مباشرة
+    </div>
+</div>
+
+<div class="confetti-container" id="confettiContainer"></div>
+
+<script>
+const STORAGE_KEY = 'portswigger_study_v2';
+
+function init() {
+    loadProgress();
+    updateAllUI();
+}
+
+function loadProgress() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return;
+    JSON.parse(saved).forEach(id => {
+        const el = document.querySelector(`.task[data-id="${id}"]`);
+        if (el) el.classList.add('done');
+    });
+}
+
+function saveProgress() {
+    const done = [];
+    document.querySelectorAll('.task.done').forEach(t => done.push(t.dataset.id));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(done));
+}
+
+function toggleTask(event, checkEl) {
+    event.stopPropagation();
+    event.preventDefault();
+    const task = checkEl.closest('.task');
+    task.classList.toggle('done');
+    saveProgress();
+    updateAllUI();
+    if (document.querySelectorAll('.task.done').length === document.querySelectorAll('.task').length) launchConfetti();
+}
+
+function toggleGroup(header) {
+    header.closest('.topic-group').classList.toggle('open');
+}
+
+function scrollToPhase(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function updateAllUI() {
+    ['phase1','phase2','phase3','phase4','phase5'].forEach(pid => {
+        const el = document.getElementById(pid);
+        if (!el) return;
+        const total = el.querySelectorAll('.task').length;
+        const done = el.querySelectorAll('.task.done').length;
+        const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+        const pctEl = document.getElementById(pid + 'Pct');
+        const countEl = document.getElementById(pid + 'Count');
+        if (pctEl) pctEl.textContent = pct + '%';
+        if (countEl) countEl.textContent = done + '/' + total;
+    });
+
+    document.querySelectorAll('.topic-group').forEach(group => {
+        const doneSpan = group.querySelector('.tg-done');
+        if (doneSpan) doneSpan.textContent = group.querySelectorAll('.task.done').length;
+    });
+
+    const total = document.querySelectorAll('.task').length;
+    const done = document.querySelectorAll('.task.done').length;
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    document.getElementById('globalPercent').textContent = pct + '%';
+    document.getElementById('globalBarFill').style.width = pct + '%';
+    document.getElementById('statDone').textContent = done;
+    document.getElementById('statRemaining').textContent = total - done;
+    document.getElementById('statTotal').textContent = total;
+
+    let cp = 5;
+    ['phase1','phase2','phase3','phase4','phase5'].forEach((pid, i) => {
+        const el = document.getElementById(pid);
+        if (el && el.querySelectorAll('.task.done').length < el.querySelectorAll('.task').length && i + 1 < cp) cp = i + 1;
+    });
+    document.getElementById('statPhase').textContent = cp;
+}
+
+function resetProgress() {
+    if (confirm('متأكد تبي تمسح كل التقدم؟')) {
+        localStorage.removeItem(STORAGE_KEY);
+        document.querySelectorAll('.task.done').forEach(t => t.classList.remove('done'));
+        updateAllUI();
+    }
+}
+
+function launchConfetti() {
+    const c = document.getElementById('confettiContainer');
+    const colors = ['#ff6633','#00e676','#ffd740','#448aff','#b388ff','#ff5252','#fff'];
+    for (let i = 0; i < 80; i++) {
+        const d = document.createElement('div');
+        d.className = 'confetti';
+        d.style.left = Math.random()*100+'%';
+        d.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+        d.style.animationDelay = Math.random()*2+'s';
+        d.style.width = (4+Math.random()*8)+'px';
+        d.style.height = (4+Math.random()*8)+'px';
+        d.style.borderRadius = Math.random()>0.5?'50%':'0';
+        c.appendChild(d);
+    }
+    setTimeout(() => { c.innerHTML = ''; }, 4000);
+}
+
+window.addEventListener('scroll', () => {
+    const btns = document.querySelectorAll('.phase-nav-btn');
+    let cur = 0;
+    document.querySelectorAll('.phase').forEach((p, i) => { if (p.getBoundingClientRect().top <= 200) cur = i; });
+    btns.forEach((b, i) => b.classList.toggle('active', i === cur));
+});
+
+init();
+</script>
+</body>
+</html>
